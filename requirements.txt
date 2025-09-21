@@ -1,0 +1,7 @@
+cffi==2.0.0
+cipherspy==0.7.0
+cryptography==46.0.1
+numpy==2.3.3
+passphera-core==0.32.1
+pycparser==2.23
+setuptools==80.9.0
