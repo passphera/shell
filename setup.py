@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name='passphera-shell',
-    version='0.1.0',
+    version='0.1.1',
     author='Fathi Abdelmalek',
     author_email='passphera@imfathi.com',
     url='https://github.com/passphera/shell',
@@ -17,7 +17,7 @@ setup(
     install_requires=['passphera-core', 'cryptography'],
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
