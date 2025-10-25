@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
     name='passphera-shell',
-    version='0.1.1',
+    version='0.2.0',
     author='Fathi Abdelmalek',
     author_email='passphera@imfathi.com',
     url='https://github.com/passphera/shell',

@@ -17,17 +17,18 @@ class GeneratePasswordUseCase:
         self.crypto_service: CryptoService = crypto_service
 
     def __call__(self, context: str, text: str) -> Password:
-        password_entity: Password = self.vault_repository.get(context)
-        if password_entity:
+        try:
+            password_entity: Password = self.vault_repository.get(context)
             raise DuplicatePasswordException(password_entity)
-        password_entity: Password = Password(context=context, text=text)
-        generator_entity: Generator = self.generator_repository.get()
-        password = generator_entity.generate_password(text)
-        crypted_password, salt = self.crypto_service.encrypt(password)
-        password_entity.password = crypted_password
-        password_entity.salt = salt
-        self.vault_repository.save(password_entity)
-        return password_entity
+        except PasswordNotFoundException:
+            password_entity: Password = Password(context=context, text=text)
+            generator_entity: Generator = self.generator_repository.get()
+            password = generator_entity.generate_password(text)
+            crypted_password, salt = self.crypto_service.encrypt(password)
+            password_entity.password = crypted_password
+            password_entity.salt = salt
+            self.vault_repository.save(password_entity)
+            return password_entity
 
 
 class GetPasswordUseCase:
@@ -36,11 +37,12 @@ class GetPasswordUseCase:
         self.crypto_service: CryptoService = crypto_service
 
     def __call__(self, context: str) -> Password:
-        password_entity: Password = self.vault_repository.get(context)
-        if not password_entity:
+        try:
+            password_entity: Password = self.vault_repository.get(context)
+            password_entity.password = self.crypto_service.decrypt(password_entity.password, password_entity.salt)
+            return password_entity
+        except PasswordNotFoundException:
             raise PasswordNotFoundException()
-        password_entity.password = self.crypto_service.decrypt(password_entity.password, password_entity.salt)
-        return password_entity
 
 
 class UpdatePasswordUseCase:
@@ -55,16 +57,17 @@ class UpdatePasswordUseCase:
         self.crypto_service: CryptoService = crypto_service
 
     def __call__(self, context: str, text: str) -> Password:
-        password_entity: Password = self.vault_repository.get(context)
-        if not password_entity:
+        try:
+            password_entity: Password = self.vault_repository.get(context)
+            generator_entity: Generator = self.generator_repository.get()
+            password = generator_entity.generate_password(text)
+            crypted_password, salt = self.crypto_service.encrypt(password)
+            password_entity.password = crypted_password
+            password_entity.salt = salt
+            self.vault_repository.update(password_entity)
+            return password_entity
+        except PasswordNotFoundException:
             raise PasswordNotFoundException()
-        generator_entity: Generator = self.generator_repository.get()
-        password = generator_entity.generate_password(text)
-        crypted_password, salt = self.crypto_service.encrypt(password)
-        password_entity.password = crypted_password
-        password_entity.salt = salt
-        self.vault_repository.update(password_entity)
-        return password_entity
 
 
 class DeletePasswordUseCase:
@@ -72,11 +75,12 @@ class DeletePasswordUseCase:
         self.vault_repository: VaultRepository = vault_repository
 
     def __call__(self, context: str) -> Password:
-        password_entity: Password = self.vault_repository.get(context)
-        if not password_entity:
+        try:
+            password_entity: Password = self.vault_repository.get(context)
+            self.vault_repository.delete(password_entity)
+            return password_entity
+        except PasswordNotFoundException:
             raise PasswordNotFoundException()
-        self.vault_repository.delete(password_entity)
-        return password_entity
 
 
 class ListPasswordsUseCase:
