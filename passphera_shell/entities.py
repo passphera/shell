@@ -1,53 +1,30 @@
-from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
-from passphera_core.entities import Generator as GeneratorEntity
+from pydantic import BaseModel, Field
+
 from passphera_core.utilities import default_properties
 
 
-@dataclass
-class Generator(GeneratorEntity):
-    def to_dict(self) -> dict:
-        """Convert the Generator entity to a dictionary."""
-        return {
-            "shift": self.shift,
-            "multiplier": self.multiplier,
-            "key": self.key,
-            "algorithm": self.algorithm,
-            "prefix": self.prefix,
-            "postfix": self.postfix,
-            "character_replacements": self.characters_replacements,
-        }
-
-    def from_dict(self, data: dict) -> None:
-        """Convert a dictionary to a Generator entity."""
-        for key, value in data.items():
-            if key in default_properties or key == "characters_replacements":
-                setattr(self, key, value)
+class Generator(BaseModel):
+    """
+    A Pydantic model representing the configuration for the password generator.
+    This model is used for serialization and validation at the application boundaries.
+    """
+    shift: int = Field(default=default_properties["shift"])
+    multiplier: int = Field(default=default_properties["multiplier"])
+    key: str = Field(default=default_properties["key"])
+    algorithm: str = Field(default=default_properties["algorithm"])
+    prefix: str = Field(default=default_properties["prefix"])
+    postfix: str = Field(default=default_properties["postfix"])
+    characters_replacements: dict[str, str] = Field(default_factory=dict)
 
 
-@dataclass
-class Password:
-    context: str = field(default_factory=str)
-    text: str = field(default_factory=str)
-    password: str = field(default_factory=str)
-    salt: bytes = field(default_factory=lambda: bytes)
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-
-    def to_dict(self) -> dict:
-        """Convert the Password entity to a dictionary."""
-        return {
-            "context": self.context,
-            "text": self.text,
-            "password": self.password,
-            "salt": self.salt,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-        }
-
-    def from_dict(self, data: dict) -> None:
-        """Convert a dictionary to a Password entity."""
-        for key, value in data.items():
-            if key in ["context", "text", "password", "salt", "created_at", "updated_at"]:
-                setattr(self, key, value)
+class Password(BaseModel):
+    """
+    A Pydantic model representing a password entry in the vault.
+    """
+    context: str = Field(default="")
+    password: str = Field(default="")
+    salt: bytes = Field(default=b"")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

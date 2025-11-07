@@ -1,7 +1,12 @@
+annotated-types==0.7.0
 cffi==2.0.0
 cipherspy==0.7.0
 cryptography==46.0.3
 numpy==2.3.4
-passphera-core==0.33.0
+passphera-core==0.34.0
 pycparser==2.23
+pydantic==2.12.4
+pydantic_core==2.41.5
 setuptools==80.9.0
+typing-inspection==0.4.2
+typing_extensions==4.15.0

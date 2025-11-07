@@ -21,7 +21,7 @@ class GeneratePasswordUseCase:
             password_entity: Password = self.vault_repository.get(context)
             raise DuplicatePasswordException(password_entity)
         except PasswordNotFoundException:
-            password_entity: Password = Password(context=context, text=text)
+            password_entity: Password = Password(context=context)
             generator_entity: Generator = self.generator_repository.get()
             password = generator_entity.generate_password(text)
             crypted_password, salt = self.crypto_service.encrypt(password)
