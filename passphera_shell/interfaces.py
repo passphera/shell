@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 
-from passphera_core.entities import Generator
-
-from passphera_shell.entities import Password
+from passphera_shell.entities import Generator, Password
 
 
 class GeneratorRepository(ABC):

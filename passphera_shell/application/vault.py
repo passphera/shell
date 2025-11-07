@@ -1,6 +1,4 @@
-from passphera_core.entities import Generator
-
-from passphera_shell.entities import Password
+from passphera_shell.entities import Generator, Password
 from passphera_shell.exceptions import DuplicatePasswordException, PasswordNotFoundException
 from passphera_shell.interfaces import GeneratorRepository, VaultRepository, CryptoService
 
